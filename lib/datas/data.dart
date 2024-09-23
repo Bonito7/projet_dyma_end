@@ -1,5 +1,6 @@
 import '../models/activity_model.dart';
 import '../models/city_model.dart';
+import '../models/trip_model.dart';
 
 List<City> cities = [
   City(
@@ -115,5 +116,44 @@ List<City> cities = [
           city: 'Korhogo',
           price: 20000.00),
     ],
+  ),
+];
+
+List<Trip> trips = [
+  Trip(
+    city: 'Abidjan',
+    activities: [
+      Activity(
+          image: 'assets/images/activities/cathedrale.jpg',
+          name: 'Cathedrale du plateau',
+          id: 'a1',
+          city: 'Abidjan',
+          price: 12000.00),
+      Activity(
+        image: 'assets/images/activities/musee.jpeg',
+        name: 'Le Musée des costumes',
+        id: 'a2',
+        city: 'Abidjan',
+        price: 8000.00,
+        status: ActivityStatus.done,
+      ),
+      Activity(
+          image: 'assets/images/activities/pyramide.jpg',
+          name: 'La Pyramide du plateau',
+          id: 'a3',
+          city: 'Abidjan',
+          price: 3000.00),
+    ],
+    date: DateTime.now().add(const Duration(days: 1)),
+  ),
+  Trip(
+    city: 'Yamoussoukro',
+    activities: [],
+    date: DateTime.now().add(const Duration(days: 2)),
+  ),
+  Trip(
+    city: 'Korhogo',
+    activities: [],
+    date: DateTime.now().subtract(const Duration(days: 1)),
   ),
 ];

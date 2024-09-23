@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:projet_dyma_end/providers/city_provider.dart';
+import 'package:projet_dyma_end/providers/trip_provider.dart';
 import 'package:projet_dyma_end/views/Home/home_view.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/dyma_drawer.dart';
 import './widgets/trip_activity_list.dart';
@@ -12,12 +15,6 @@ import '../../models/activity_model.dart';
 
 class CityView extends StatefulWidget {
   static const String routeName = '/city';
-  final City? city;
-  final Function addTrip;
-
-  List<Activity> get activities {
-    return city?.activities ?? [];
-  }
 
   showContext({BuildContext? context, List<Widget>? children}) {
     var orientation = MediaQuery.of(context!).orientation;
@@ -33,7 +30,7 @@ class CityView extends StatefulWidget {
     }
   }
 
-  const CityView({super.key, this.city, required this.addTrip});
+  const CityView({super.key});
 
   @override
   State<CityView> createState() => _CityViewState();
@@ -47,21 +44,17 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    mytrip = Trip(activities: [], city: 'Abidjan', date: null);
+    mytrip = Trip(
+      activities: [],
+      city: null,
+      date: null,
+    );
     index = 0;
-  }
-
-  List<Activity> get tripActivities {
-    return widget.activities.where((activity) {
-      return mytrip.activities.contains(activity.id);
-    }).toList();
   }
 
   double get amount {
     return mytrip.activities.fold(0.00, (prev, element) {
-      var activity =
-          widget.activities.firstWhere((activity) => activity.id == element);
-      return prev + activity.price;
+      return prev + element.price;
     });
   }
 
@@ -103,21 +96,21 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
     });
   }
 
-  void toggleActivity(String id) {
+  void toggleActivity(Activity activity) {
     setState(() {
-      mytrip.activities.contains(id)
-          ? mytrip.activities.remove(id)
-          : mytrip.activities.add(id);
+      mytrip.activities.contains(activity)
+          ? mytrip.activities.remove(activity)
+          : mytrip.activities.add(activity);
     });
   }
 
-  void deleteTripActivity(String id) {
+  void deleteTripActivity(Activity activity) {
     setState(() {
-      mytrip.activities.remove(id);
+      mytrip.activities.remove(activity);
     });
   }
 
-  void saveTrip() async {
+  void saveTrip(String cityName) async {
     final result = await showDialog(
       context: context,
       builder: (context) {
@@ -165,14 +158,55 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
         );
       },
     );
-    if (result == 'save') {
-      widget.addTrip(mytrip);
+    if (result == 'save' && mytrip.date == null) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text(
+                'Attention !',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orangeAccent,
+                ),
+              ),
+              content: const Text(
+                  'Vous n\'avez pas entré de date pour votre voyage, veillez à le faire svp!'),
+              actions: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        WidgetStateProperty.all(Colors.orangeAccent),
+                    fixedSize:
+                        WidgetStateProperty.all(const Size.fromWidth(350)),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Ok',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
+    } else if (result == 'save') {
+      // widget.addTrip(mytrip);
+      mytrip.city = cityName;
+      Provider.of<TripProvider>(context).addTrip(mytrip);
       Navigator.pushNamed(context, HomeView.routeName);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    String cityName = ModalRoute.of(context)?.settings.arguments as String;
+    City city = Provider.of<CityProvider>(context).getCityByName(cityName);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Organisation du voyage'),
@@ -187,7 +221,7 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
           context: context,
           children: [
             TripOverview(
-              cityName: widget.city?.name,
+              cityName: city.name,
               setDate: setDate,
               trip: mytrip,
               amount: amount,
@@ -195,12 +229,12 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
             Expanded(
               child: index == 0
                   ? ActivityList(
-                      activities: widget.activities,
+                      activities: city.activities,
                       selectedActivities: mytrip.activities,
                       toggleActivity: toggleActivity,
                     )
                   : TripActivityList(
-                      activities: tripActivities,
+                      activities: mytrip.activities,
                       deleteTripActivity: deleteTripActivity,
                     ),
             ),
@@ -209,7 +243,9 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepOrangeAccent,
-        onPressed: saveTrip,
+        onPressed: () {
+          saveTrip(city.name);
+        },
         child: const Icon(
           Icons.forward,
           color: Colors.white,

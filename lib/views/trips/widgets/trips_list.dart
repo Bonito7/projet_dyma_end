@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:projet_dyma_end/views/trip/trip_view.dart';
 
 import '../../../models/trip_model.dart';
 
@@ -14,7 +15,7 @@ class TripsList extends StatelessWidget {
       itemBuilder: (context, i) {
         var trip = trips[i];
         return ListTile(
-          title: Text(trip.city),
+          title: Text(trip.city!),
           subtitle: trip.date != null // Check if date is not null
               ? Text(DateFormat("d/M/y").format(trip.date!)) // Format the date
               : const Text('Pas de date choisis pour ce voyage!'),
@@ -22,6 +23,11 @@ class TripsList extends StatelessWidget {
             Icons.info,
             color: Colors.orangeAccent,
           ),
+          onTap: () =>
+              Navigator.pushNamed(context, TripView.routeName, arguments: {
+            'tripId': trip.id,
+            'cityName': trip.city,
+          }),
         );
       },
     );

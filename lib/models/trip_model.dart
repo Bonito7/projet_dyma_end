@@ -1,6 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:projet_dyma_end/models/activity_model.dart';
+
 class Trip {
-  String city;
-  List<String> activities;
+  String id;
+  String? city;
+  List<Activity> activities;
   DateTime? date;
-  Trip({required this.city, required this.activities, this.date});
+  Trip({
+    this.city,
+    required this.activities,
+    this.date,
+  }) : id = UniqueKey().toString();
 }

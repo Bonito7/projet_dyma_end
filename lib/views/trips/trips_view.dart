@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:projet_dyma_end/models/trip_model.dart';
+import 'package:projet_dyma_end/providers/trip_provider.dart';
 import 'package:projet_dyma_end/views/trips/widgets/trips_list.dart';
 import 'package:projet_dyma_end/widgets/dyma_drawer.dart';
+import 'package:provider/provider.dart';
 
-import '../../models/trip_model.dart';
-
-class TripsView extends StatefulWidget {
+class TripsView extends StatelessWidget {
   static const String routeName = '/trips';
-  final List<Trip> trips;
 
-  const TripsView({super.key, required this.trips});
+  const TripsView({super.key});
 
-  @override
-  State<TripsView> createState() => _TripsViewState();
-}
-
-class _TripsViewState extends State<TripsView> {
   @override
   Widget build(BuildContext context) {
+    List<Trip> trips = Provider.of<TripProvider>(context).trips;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -46,12 +42,12 @@ class _TripsViewState extends State<TripsView> {
         drawer: const DymaDrawer(),
         body: TabBarView(children: [
           TripsList(
-            trips: widget.trips
+            trips: trips
                 .where((trip) => DateTime.now().isBefore(trip.date!))
                 .toList(),
           ),
           TripsList(
-            trips: widget.trips
+            trips: trips
                 .where((trip) => DateTime.now().isAfter(trip.date!))
                 .toList(),
           ),
