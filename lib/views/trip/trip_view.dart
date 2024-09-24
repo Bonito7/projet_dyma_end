@@ -6,6 +6,7 @@ import 'package:projet_dyma_end/views/trip/widgets/trip_city_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/city_model.dart';
+import 'widgets/trip_weather.dart';
 
 class TripView extends StatelessWidget {
   static const String routeName = '/trip';
@@ -30,6 +31,9 @@ class TripView extends StatelessWidget {
             children: [
               TripCityBar(
                 city: city,
+              ),
+              TripWeather(
+                cityName: cityName,
               ),
               TripActivities(
                 tripId: tripId!,
