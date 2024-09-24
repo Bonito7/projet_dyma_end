@@ -48,6 +48,7 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
       activities: [],
       city: null,
       date: null,
+      id: null,
     );
     index = 0;
   }
@@ -198,7 +199,7 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
     } else if (result == 'save') {
       // widget.addTrip(mytrip);
       mytrip.city = cityName;
-      Provider.of<TripProvider>(context).addTrip(mytrip);
+      Provider.of<TripProvider>(context, listen: false).addTrip(mytrip);
       Navigator.pushNamed(context, HomeView.routeName);
     }
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projet_dyma_end/providers/city_provider.dart';
 import 'package:projet_dyma_end/views/Home/widgets/city_card.dart';
 import 'package:projet_dyma_end/widgets/dyma_drawer.dart';
+import 'package:projet_dyma_end/widgets/dyma_loader.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/city_model.dart';
@@ -34,13 +35,17 @@ class _HomeViewState extends State<HomeView> {
       drawer: const DymaDrawer(),
       body: Container(
         padding: const EdgeInsets.all(10.00),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: cities.map((city) {
-              return CityCard(
-                city: city,
-              );
-            }).toList()),
+        child: cities.isNotEmpty
+            ? RefreshIndicator(
+                onRefresh: Provider.of<CityProvider>(context).fetchData,
+                child: ListView.builder(
+                  itemCount: cities.length,
+                  itemBuilder: (_, i) => CityCard(
+                    city: cities[i],
+                  ),
+                ),
+              )
+            : const DymaLoader(),
       ),
     );
   }

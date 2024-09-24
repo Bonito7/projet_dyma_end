@@ -18,7 +18,7 @@ class CityCard extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Ink.image(
-              image: AssetImage(city.image),
+              image: NetworkImage(city.image),
               fit: BoxFit.fill,
               child: InkWell(
                 onTap: () {

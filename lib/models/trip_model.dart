@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:projet_dyma_end/models/activity_model.dart';
 
 class Trip {
-  String id;
+  String? id;
   String? city;
   List<Activity> activities;
   DateTime? date;
@@ -10,5 +9,23 @@ class Trip {
     this.city,
     required this.activities,
     this.date,
-  }) : id = UniqueKey().toString();
+    this.id,
+  });
+
+  Trip.fromJson(Map<String, dynamic> json)
+      : id = json['_id'],
+        city = json['city'],
+        date = DateTime.parse(json['date']),
+        activities = (json['activities'] as List)
+            .map((activityJson) => Activity.fromJson(activityJson))
+            .toList();
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'city': city,
+      'date': date?.toIso8601String(),
+      'activities': activities.map((activity) => activity.toJson()).toList(),
+    };
+  }
 }

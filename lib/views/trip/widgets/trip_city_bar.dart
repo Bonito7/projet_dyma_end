@@ -16,7 +16,7 @@ class TripCityBar extends StatelessWidget {
           ColorFiltered(
             colorFilter: ColorFilter.mode(
                 Colors.black.withOpacity(0.5), BlendMode.darken),
-            child: Image.asset(
+            child: Image.network(
               city.image,
               fit: BoxFit.cover,
             ),

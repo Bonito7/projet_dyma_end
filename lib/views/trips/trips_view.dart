@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:projet_dyma_end/models/trip_model.dart';
 import 'package:projet_dyma_end/providers/trip_provider.dart';
 import 'package:projet_dyma_end/views/trips/widgets/trips_list.dart';
 import 'package:projet_dyma_end/widgets/dyma_drawer.dart';
+import 'package:projet_dyma_end/widgets/dyma_loader.dart';
 import 'package:provider/provider.dart';
 
 class TripsView extends StatelessWidget {
@@ -12,7 +12,7 @@ class TripsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Trip> trips = Provider.of<TripProvider>(context).trips;
+    TripProvider tripProvider = Provider.of<TripProvider>(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -40,18 +40,36 @@ class TripsView extends StatelessWidget {
           ),
         ),
         drawer: const DymaDrawer(),
-        body: TabBarView(children: [
-          TripsList(
-            trips: trips
-                .where((trip) => DateTime.now().isBefore(trip.date!))
-                .toList(),
-          ),
-          TripsList(
-            trips: trips
-                .where((trip) => DateTime.now().isAfter(trip.date!))
-                .toList(),
-          ),
-        ]),
+        body: tripProvider.isLoading != true
+            ? tripProvider.trips.isNotEmpty
+                ? TabBarView(
+                    children: [
+                      TripsList(
+                        trips: tripProvider.trips
+                            .where(
+                                (trip) => DateTime.now().isBefore(trip.date!))
+                            .toList(),
+                      ),
+                      TripsList(
+                        trips: tripProvider.trips
+                            .where((trip) => DateTime.now().isAfter(trip.date!))
+                            .toList(),
+                      ),
+                    ],
+                  )
+                : Container(
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Aucun voyage pour le moment !',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orangeAccent,
+                      ),
+                    ),
+                  )
+            : const DymaLoader(),
       ),
     );
   }

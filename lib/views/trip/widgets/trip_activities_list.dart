@@ -46,9 +46,11 @@ class TripActivitiesList extends StatelessWidget {
                         title: Text(activity.name),
                       ),
                     ),
-                    onDismissed: (_) {
-                      Provider.of<TripProvider>(context, listen: false)
-                          .setActivityToDone(activity);
+                    confirmDismiss: (_) {
+                      return Provider.of<TripProvider>(context, listen: false)
+                          .updateTrip(trip, activity.id)
+                          .then((_) => true)
+                          .catchError((_) => false);
                     },
                   )
                 : Card(
