@@ -48,7 +48,7 @@ class TripActivitiesList extends StatelessWidget {
                     ),
                     confirmDismiss: (_) {
                       return Provider.of<TripProvider>(context, listen: false)
-                          .updateTrip(trip, activity.id)
+                          .updateTrip(trip, activity.id!)
                           .then((_) => true)
                           .catchError((_) => false);
                     },

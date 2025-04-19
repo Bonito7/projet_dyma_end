@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:projet_dyma_end/providers/city_provider.dart';
 import 'package:projet_dyma_end/providers/trip_provider.dart';
+import 'package:projet_dyma_end/views/activity_Form/activity_form_view.dart';
 import 'package:projet_dyma_end/views/trip/trip_view.dart';
 import 'package:projet_dyma_end/views/trips/trips_view.dart';
+// import 'package:projet_dyma_end/widgets/widgets_courses/example_animation_widget.dart';
+// import 'package:projet_dyma_end/widgets/widgets_courses/main_widget.dart';
 
 import 'package:provider/provider.dart';
 
@@ -59,11 +62,14 @@ class _DymaTripState extends State<DymaTrip> {
           ),
         ),
         debugShowCheckedModeBanner: false,
+        // home: const ExampleAnimationWidget(),
+        // home: const MainWidget(),
         home: const HomeView(),
         routes: {
           CityView.routeName: (_) => const CityView(),
           TripsView.routeName: (_) => const TripsView(),
           TripView.routeName: (_) => const TripView(),
+          ActivityFormView.routeName: (_) => const ActivityFormView(),
         },
         onUnknownRoute: (_) {
           return MaterialPageRoute(builder: (_) {

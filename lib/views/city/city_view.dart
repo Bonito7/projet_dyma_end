@@ -5,6 +5,7 @@ import 'package:projet_dyma_end/views/Home/home_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/dyma_drawer.dart';
+import '../activity_Form/activity_form_view.dart';
 import './widgets/trip_activity_list.dart';
 import './widgets/activity_list.dart';
 import './widgets/trip_overview.dart';
@@ -211,8 +212,15 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Organisation du voyage'),
-        actions: const [
-          Icon(Icons.more_vert),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add_circle),
+            onPressed: () => Navigator.pushNamed(
+              context,
+              ActivityFormView.routeName,
+              arguments: cityName,
+            ),
+          ),
         ],
       ),
       drawer: const DymaDrawer(),
@@ -223,6 +231,7 @@ class _CityViewState extends State<CityView> with WidgetsBindingObserver {
           children: [
             TripOverview(
               cityName: city.name,
+              cityImage: city.image,
               setDate: setDate,
               trip: mytrip,
               amount: amount,

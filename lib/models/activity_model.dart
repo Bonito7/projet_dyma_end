@@ -3,17 +3,19 @@ enum ActivityStatus { ongoing, done }
 class Activity {
   String name;
   String image;
-  String id;
+  String? id;
   String city;
   double price;
   ActivityStatus status;
+  LocationActivity? location;
   Activity({
     required this.name,
     required this.city,
-    required this.id,
+    this.id,
     required this.image,
     required this.price,
     this.status = ActivityStatus.ongoing,
+    this.location,
   });
 
   Activity.fromJson(Map<String, dynamic> json)
@@ -26,7 +28,7 @@ class Activity {
             json['status'] == 0 ? ActivityStatus.ongoing : ActivityStatus.done;
 
   Map<String, dynamic> toJson() {
-    return {
+    Map<String, dynamic> value = {
       '_id': id,
       'name': name,
       'image': image,
@@ -34,5 +36,21 @@ class Activity {
       'price': price,
       'status': status == ActivityStatus.ongoing ? 0 : 1
     };
+    if (id != null) {
+      value['_id'] = id;
+    }
+    return value;
   }
+}
+
+class LocationActivity {
+  String? address;
+  double? longitude;
+  double? latitude;
+
+  LocationActivity({
+    required this.address,
+    required this.latitude,
+    required this.longitude,
+  });
 }

@@ -22,9 +22,28 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<City> cities = Provider.of<CityProvider>(context).cities;
+    CityProvider cityProvider = Provider.of<CityProvider>(context);
+    List<City> filteredCities =
+        cityProvider.getFilteredCities(searchController.text);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dymatrip'),
@@ -33,19 +52,75 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
       drawer: const DymaDrawer(),
-      body: Container(
-        padding: const EdgeInsets.all(10.00),
-        child: cities.isNotEmpty
-            ? RefreshIndicator(
-                onRefresh: Provider.of<CityProvider>(context).fetchData,
-                child: ListView.builder(
-                  itemCount: cities.length,
-                  itemBuilder: (_, i) => CityCard(
-                    city: cities[i],
+      body: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    cursorColor: Colors.green,
+                    controller: searchController,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      prefixIconColor: Colors.deepOrangeAccent,
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green,
+                          width: 2.0,
+                        ),
+                      ),
+                      hintText: 'rechercher une ville',
+                    ),
+                    onSubmitted: (value) => print(value),
                   ),
                 ),
-              )
-            : const DymaLoader(),
+                IconButton(
+                  onPressed: () {
+                    setState(() => searchController.clear());
+                  },
+                  color: Colors.deepOrangeAccent,
+                  icon: const Icon(Icons.clear),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(10.00),
+              child: cityProvider.isLoading
+                  ? const DymaLoader()
+                  : filteredCities.isNotEmpty
+                      ? RefreshIndicator(
+                          onRefresh:
+                              Provider.of<CityProvider>(context).fetchData,
+                          child: ListView.builder(
+                            itemCount: filteredCities.length,
+                            itemBuilder: (_, i) => CityCard(
+                              city: filteredCities[i],
+                            ),
+                          ),
+                        )
+                      : const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Aucun resultat retrouvé!',
+                              style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepOrangeAccent,
+                              ),
+                            ),
+                          ],
+                        ),
+            ),
+          ),
+        ],
       ),
     );
   }
